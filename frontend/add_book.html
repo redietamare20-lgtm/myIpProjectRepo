@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Book</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="register-container">
+        <h2>Add New Book</h2>
+
+        <form id="addBookForm">
+            <input type="text" id="title"
+                placeholder="Book Title" required>
+
+            <input type="text" id="author"
+                placeholder="Author Name" required>
+
+            <input type="text" id="category"
+                placeholder="Category">
+
+            <input type="number" id="price"
+                placeholder="Price (ETB)" min="0"
+                step="0.01" required>
+
+            <textarea id="description"
+                placeholder="Book Description"></textarea>
+
+            <button type="submit">Add Book</button>
+        </form>
+
+        <p id="message"></p>
+    </div>
+
+    <script src="add_book.js"></script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Bookstore</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <header>
+        <nav class="navbar">
+            <h1>BookStore</h1>
+
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="#books">Books</a></li>
+                <li><a href="#categories">Categories</a></li>
+                <li><a href="#about">About</a></li>
+            </ul>
+
+            <button class="login-btn">Login</button>
+        </nav>
+    </header>
+
+    <!-- Welcome Section -->
+    <section class="hero">
+        <h2>Welcome to Online Bookstore</h2>
+        <p>Discover, explore and order your favorite books.</p>
+
+      <input
+    type="text"
+    id="searchInput"
+    placeholder="Search for books..."
+>
+
+<button id="searchButton">Search</button>
+
+<p id="searchMessage"></p>
+    </section>
+
+    <!-- Categories -->
+    <section id="categories">
+        <h2>Book Categories</h2>
+
+        <div class="categories">
+            <div class="category">Technology</div>
+            <div class="category">Business</div>
+            <div class="category">Education</div>
+            <div class="category">Science</div>
+        </div>
+    </section>
+
+    <!-- Books -->
+    <section id="books">
+        <h2>Available Books</h2>
+
+        <div class="book-container">
+<div id="bookContainer">
+</div>
+        </div>
+    </section>
+    <section id="bookDetails" class="book-details">
+    <h2>Book Details</h2>
+    <p id="detailTitle"></p>
+    <p id="detailAuthor"></p>
+    <p id="detailPrice"></p>
+    <p id="detailCategory"></p>
+    <button id="closeDetails">Close</button>
+</section>
+
+    <!-- About -->
+    <section id="about">
+        <h2>About Our Bookstore</h2>
+        <p>
+            Our online bookstore helps customers
+            discover and order books easily.
+        </p>
+    </section>
+
+    <footer>
+        <p>© 2026 Online Bookstore Management System</p>
+    </footer>
+<script src="script.js"></script>
+</body>
+</html>

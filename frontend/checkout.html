@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Online Bookstore</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="cart-container">
+        <h1>Checkout</h1>
+
+        <h3>Order Summary</h3>
+        <div id="orderItems"></div>
+
+        <h3>Total: <span id="orderTotal">0</span> ETB</h3>
+
+        <form id="checkoutForm">
+            <input type="text" id="customerName"
+                   placeholder="Full Name" required>
+
+            <input type="email" id="customerEmail"
+                   placeholder="Email Address" required>
+
+            <input type="text" id="customerAddress"
+                   placeholder="Delivery Address" required>
+
+            <button type="submit">Place Order</button>
+        </form>
+
+        <p><a href="cart.html">Back to Cart</a></p>
+    </div>
+
+    <script src="checkout.js"></script>
+</body>
+</html>
