@@ -17,6 +17,7 @@ include __DIR__ . '/includes/header.php';
 ?>
 <div class="auth-card">
   <h1>Create your account</h1>
+  <p class="muted">Join to save your details, place orders, and track your delivery status.</p>
   <?php foreach ($errors as $er): ?><div class="alert alert-error" role="alert"><?= e($er) ?></div><?php endforeach; ?>
   <form method="post" action="">
     <?= csrf_field() ?>
@@ -25,7 +26,7 @@ include __DIR__ . '/includes/header.php';
     <label>Phone (optional)<input type="tel" name="phone" maxlength="30" value="<?= e($_POST['phone'] ?? '') ?>"></label>
     <label>Password<input type="password" name="password" required minlength="8" autocomplete="new-password"><small class="muted">At least 8 characters, with letters and numbers.</small></label>
     <label>Confirm password<input type="password" name="password2" required minlength="8" autocomplete="new-password"></label>
-    <button class="btn btn-primary btn-block" type="submit">Register</button>
+    <button class="btn btn-primary btn-block" type="submit">Create account</button>
   </form>
   <p class="auth-alt">Already registered? <a href="<?= e(url('login.php')) ?>">Log in</a></p>
 </div>

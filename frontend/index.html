@@ -3,86 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online Bookstore</title>
+    <meta name="theme-color" content="#172B24">
+    <meta name="description" content="Discover your next favourite read at Online Bookstore.">
+    <title>Online Bookstore | Books for the curious</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-
-<body>
-
-    <!-- Navigation -->
-    <header>
-        <nav class="navbar">
-            <h1>BookStore</h1>
-
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="#books">Books</a></li>
-                <li><a href="#categories">Categories</a></li>
-                <li><a href="#about">About</a></li>
-            </ul>
-
-            <button class="login-btn">Login</button>
+<body class="storefront-home">
+    <header class="store-header">
+        <nav class="store-nav" aria-label="Main navigation">
+            <a class="store-brand" href="index.html" aria-label="Online Bookstore home">
+                <span class="store-brand-mark" aria-hidden="true">
+                    <svg viewBox="0 0 32 32"><path d="M5 7.5c4.1-1.6 7.7-1.2 11 1.1v17c-3.3-2.3-6.9-2.7-11-1.1zM27 7.5c-4.1-1.6-7.7-1.2-11 1.1v17c3.3-2.3 6.9-2.7 11-1.1z"/></svg>
+                </span>
+                <span class="store-brand-copy"><strong>Online Bookstore</strong><small>BOOKS FOR THE CURIOUS</small></span>
+            </a>
+            <button class="store-menu-toggle" type="button" aria-expanded="false" aria-controls="store-links" aria-label="Open menu">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+            </button>
+            <div class="store-links" id="store-links">
+                <a class="store-link-active" href="index.html" aria-current="page">Home</a>
+                <a href="../books.php">Books</a>
+                <a href="#categories">Categories</a>
+                <a href="#about">Our story</a>
+                <a class="store-cart-link" href="../customer/cart.php">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.2 11.1a2 2 0 0 0 2 1.6h8.9a2 2 0 0 0 1.9-1.4L22 8H6"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+                    <span>Cart</span>
+                </a>
+                <a class="store-login-link" href="../login.php">Sign in <span aria-hidden="true">&rarr;</span></a>
+            </div>
         </nav>
     </header>
 
-    <!-- Welcome Section -->
-    <section class="hero">
-        <h2>Welcome to Online Bookstore</h2>
-        <p>Discover, explore and order your favorite books.</p>
+    <main>
+        <section class="store-hero">
+            <div class="store-hero-copy">
+                <span class="store-eyebrow"><i aria-hidden="true"></i> YOUR NEXT CHAPTER STARTS HERE</span>
+                <h1>Stories worth<br><em>staying up for.</em></h1>
+                <p>Find a new perspective, revisit an old favourite, or follow a title somewhere unexpected.</p>
+                <form class="store-search" id="bookSearchForm" role="search">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg>
+                    <label class="sr-only" for="searchInput">Search books by title or author</label>
+                    <input id="searchInput" type="search" placeholder="Search by title or author..." autocomplete="off">
+                    <button id="searchButton" type="submit">Find a book <span aria-hidden="true">&rarr;</span></button>
+                </form>
+                <p class="store-hero-note"><span class="store-live-dot" aria-hidden="true"></span> A growing collection, refreshed from our shelves</p>
+            </div>
+            <div class="store-hero-art" aria-hidden="true">
+                <div class="store-sun"></div>
+                <div class="store-arch store-arch-back"></div>
+                <div class="store-arch store-arch-front"></div>
+                <div class="store-book-stack store-stack-back"></div>
+                <div class="store-book-stack store-stack-front"></div>
+                <span class="store-hero-note-card"><strong>Read slowly.</strong><span>Stay curious.</span></span>
+                <span class="store-art-spark store-spark-one"><svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9 4.9 19.1"/></svg></span>
+                <span class="store-art-spark store-spark-two"><svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9 4.9 19.1"/></svg></span>
+            </div>
+            <div class="store-hero-index" aria-hidden="true"><span>01</span><i></i><span>DISCOVER</span></div>
+        </section>
 
-      <input
-    type="text"
-    id="searchInput"
-    placeholder="Search for books..."
->
-
-<button id="searchButton">Search</button>
-
-<p id="searchMessage"></p>
-    </section>
-
-    <!-- Categories -->
-    <section id="categories">
-        <h2>Book Categories</h2>
-
-        <div class="categories">
-            <div class="category">Technology</div>
-            <div class="category">Business</div>
-            <div class="category">Education</div>
-            <div class="category">Science</div>
+        <div class="store-assurance" aria-label="Our service">
+            <span><i>01</i> New discoveries, every day</span>
+            <span><i>02</i> A personal kind of bookshop</span>
+            <span><i>03</i> From our shelf to your door</span>
         </div>
-    </section>
 
-    <!-- Books -->
-    <section id="books">
-        <h2>Available Books</h2>
+        <section class="store-section" id="categories">
+            <div class="store-section-heading">
+                <div><span class="store-kicker">Follow your curiosity</span><h2>Find your kind of story.</h2></div>
+                <a class="store-text-link" href="../books.php">Explore all books <span aria-hidden="true">↗</span></a>
+            </div>
+            <div class="store-category-list" id="categoryList" aria-label="Filter by category">
+                <span class="store-category-skeleton"></span>
+                <span class="store-category-skeleton"></span>
+                <span class="store-category-skeleton"></span>
+            </div>
+        </section>
 
-        <div class="book-container">
-<div id="bookContainer">
-</div>
-        </div>
-    </section>
-    <section id="bookDetails" class="book-details">
-    <h2>Book Details</h2>
-    <p id="detailTitle"></p>
-    <p id="detailAuthor"></p>
-    <p id="detailPrice"></p>
-    <p id="detailCategory"></p>
-    <button id="closeDetails">Close</button>
-</section>
+        <section class="store-section store-books-section" id="books">
+            <div class="store-section-heading">
+                <div><span class="store-kicker">Picked from the shelves</span><h2>Worth a closer look.</h2></div>
+                <a class="store-text-link" href="../books.php">Browse the collection <span aria-hidden="true">↗</span></a>
+            </div>
+            <p class="store-results" id="searchMessage" aria-live="polite">Finding books for you…</p>
+            <div class="store-book-grid" id="bookContainer" aria-live="polite">
+                <div class="store-book-skeleton"></div>
+                <div class="store-book-skeleton"></div>
+                <div class="store-book-skeleton"></div>
+                <div class="store-book-skeleton"></div>
+            </div>
+            <noscript><p class="store-empty-note">Turn on JavaScript to see the latest books from our collection.</p></noscript>
+        </section>
 
-    <!-- About -->
-    <section id="about">
-        <h2>About Our Bookstore</h2>
-        <p>
-            Our online bookstore helps customers
-            discover and order books easily.
-        </p>
-    </section>
+        <section class="store-about" id="about">
+            <div class="store-about-mark" aria-hidden="true">“</div>
+            <div><span class="store-kicker">A little about us</span><h2>For the books you remember.<br>And the ones you haven&rsquo;t met yet.</h2>
+                <p>We believe the right book can find you at exactly the right time. Browse our collection and let curiosity lead the way.</p>
+            </div>
+            <a href="../about.php" class="store-about-link" aria-label="Discover our story">↗</a>
+        </section>
+    </main>
 
-    <footer>
-        <p>© 2026 Online Bookstore Management System</p>
+    <footer class="store-footer">
+        <a class="store-brand store-footer-brand" href="index.html">
+            <span class="store-brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M5 7.5c4.1-1.6 7.7-1.2 11 1.1v17c-3.3-2.3-6.9-2.7-11-1.1zM27 7.5c-4.1-1.6-7.7-1.2-11 1.1v17c3.3-2.3 6.9-2.7 11-1.1z"/></svg></span>
+            <span class="store-brand-copy"><strong>Online Bookstore</strong><small>BOOKS FOR THE CURIOUS</small></span>
+        </a>
+        <p>A good book is always a good idea.</p>
+        <span class="store-copyright">&copy; 2026 Online Bookstore</span>
     </footer>
-<script src="script.js"></script>
+
+    <script src="script.js"></script>
 </body>
 </html>

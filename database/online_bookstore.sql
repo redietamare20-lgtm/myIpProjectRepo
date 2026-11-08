@@ -3,7 +3,7 @@ CREATE DATABASE IF NOT EXISTS online_bookstore CHARACTER SET utf8mb4 COLLATE utf
 USE online_bookstore;
 
 SET FOREIGN_KEY_CHECKS = 0;
-DROP TABLE IF EXISTS activity_logs, notifications, payments, order_items, orders, cart_items, cart, books, authors, categories, users;
+DROP TABLE IF EXISTS activity_logs, notifications, payments, order_items, orders, cart_items, cart, reviews, books, authors, categories, users;
 SET FOREIGN_KEY_CHECKS = 1;
 
 CREATE TABLE users (
@@ -54,6 +54,20 @@ CREATE TABLE books (
   INDEX idx_books_updated (updated_at),
   CONSTRAINT fk_books_author FOREIGN KEY (author_id) REFERENCES authors(id) ON DELETE SET NULL,
   CONSTRAINT fk_books_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE reviews (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id INT UNSIGNED NOT NULL,
+  book_id INT UNSIGNED NOT NULL,
+  rating TINYINT UNSIGNED NOT NULL,
+  review_text TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_reviews_user_book (user_id, book_id),
+  INDEX idx_reviews_book_created (book_id, created_at),
+  CONSTRAINT fk_reviews_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_reviews_book FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE cart (

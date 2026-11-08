@@ -10,6 +10,8 @@ Pure HTML5 + CSS3 + vanilla JavaScript (Fetch API) + core PHP (PDO, sessions) + 
 
 If your MySQL root user has a password, change it in `config/database.php`.
 If the folder name or URL is different, change `BASE_URL` at the top of `includes/functions.php`.
+For an existing installation, run the additive migration `database/migrations/001_create_reviews.sql` in phpMyAdmin.
+Do not re-import `online_bookstore.sql` into an existing database; that setup script recreates its tables.
 
 ## Demo accounts
 | Role     | Email                  | Password      |
@@ -63,6 +65,18 @@ Online payment gateways are intentionally NOT implemented.
 8. Open Books in two browsers (one admin, one customer) and change a price: it updates in ~4 s.
 9. Try to buy more than the stock: it is refused. 10. Block a customer: they are logged out on their next request.
 11. Resize the window: layout adapts to tablet and phone widths.
+12. Sign in as a customer with a delivered order; submit one review and confirm a second review is refused.
+
+## Storefront and dashboard
+The book catalogue is paginated (12 books per page) and keeps search, category, and sort filters when changing pages.
+The home page highlights the newest books and ranks bestsellers from completed order data. The admin dashboard
+draws its seven-day sales overview with the native Canvas API; it refreshes with the existing order polling.
+Administrators can also create or block additional admin accounts and review order payments in the admin sidebar.
+Admin accounts use the existing `users` table with the `admin` role; the project does not maintain a separate
+`admins` table. Cash-on-delivery payment status follows order progress and can be reconciled in Admin -> Payments.
+Verified customers can rate and review a book after its order is delivered; each customer can post one review per book.
+Fresh database installs create the reviews table; existing installations should use the migration noted above.
 
 ## Not included
-Pagination of the book list (shows up to 100 books), email sending, online payments.
+Email delivery, self-service password reset, newsletter subscriptions, and online payment gateways are not configured.
+Checkout uses cash on delivery.

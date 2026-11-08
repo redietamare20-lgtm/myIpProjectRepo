@@ -9,11 +9,12 @@ $pageTitle = 'Shopping cart';
 include __DIR__ . '/../includes/header.php';
 ?>
 <h1 class="page-title">Shopping cart</h1>
+<p class="muted" style="margin:-.25rem 0 1.25rem;">Review your selections, adjust quantities, and check out when you&rsquo;re ready.</p>
 <div data-live="books cart" data-live-id="cart">
 <?php if (!$items): ?>
-  <div class="empty-state"><h3>Your cart is empty</h3><p>Find something to read.</p><a class="btn btn-primary" href="<?= e(url('books.php')) ?>">Browse books</a></div>
+  <div class="empty-state"><h3>Your cart is empty</h3><p>Find your next read and add it to your cart.</p><a class="btn btn-primary" href="<?= e(url('books.php')) ?>">Browse books</a></div>
 <?php else: ?>
-  <?php if ($problem): ?><div class="alert alert-warning">Some items have less stock than you selected. Please lower the quantity.</div><?php endif; ?>
+  <?php if ($problem): ?><div class="alert alert-warning">Some items have less stock than you selected. Please lower the quantity before checkout.</div><?php endif; ?>
   <div class="table-wrap"><table class="table cart-table">
     <thead><tr><th>Book</th><th>Price</th><th>Quantity</th><th>Subtotal</th><th></th></tr></thead>
     <tbody>

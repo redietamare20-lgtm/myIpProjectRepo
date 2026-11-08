@@ -6,6 +6,15 @@ $stats = admin_stats();
 $recent = $pdo->query('SELECT o.id, o.total_amount, o.status, o.created_at, u.full_name FROM orders o JOIN users u ON u.id = o.user_id ORDER BY o.id DESC LIMIT 6')->fetchAll();
 $low = $pdo->query('SELECT id, title, stock FROM books WHERE stock <= ' . LOW_STOCK . ' ORDER BY stock ASC, title LIMIT 6')->fetchAll();
 $logs = $pdo->query('SELECT l.action, l.details, l.created_at, u.full_name FROM activity_logs l LEFT JOIN users u ON u.id = l.user_id ORDER BY l.id DESC LIMIT 8')->fetchAll();
+$chartRows = $pdo->query("SELECT DATE(created_at) AS sale_date, SUM(total_amount) AS revenue
+    FROM orders
+    WHERE status IN (" . SALES_STATUSES . ") AND created_at >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+    GROUP BY DATE(created_at)")->fetchAll(PDO::FETCH_KEY_PAIR);
+$salesChart = [];
+for ($day = 6; $day >= 0; $day--) {
+    $date = date('Y-m-d', strtotime('-' . $day . ' days'));
+    $salesChart[] = ['label' => date('D', strtotime($date)), 'value' => (float)($chartRows[$date] ?? 0)];
+}
 $layout = 'admin'; $pageTitle = 'Dashboard';
 include __DIR__ . '/../includes/header.php';
 ?>
@@ -17,6 +26,17 @@ include __DIR__ . '/../includes/header.php';
   <div class="stat-card stat-warn"><span class="stat-label">Pending orders</span><span class="stat-value"><?= (int)$stats['pending'] ?></span></div>
   <div class="stat-card stat-warn"><span class="stat-label">Low / out of stock</span><span class="stat-value"><?= (int)$stats['low_stock'] ?></span></div>
 </div>
+<section class="card sales-overview" data-live="orders" data-live-id="admin-sales-overview">
+  <div class="section-head">
+    <div><span class="section-kicker">Last seven days</span><h2 class="section-title">Sales overview</h2></div>
+    <a href="<?= e(url('admin/reports.php')) ?>">View reports <span aria-hidden="true">&rarr;</span></a>
+  </div>
+  <div class="sales-chart-wrap">
+    <canvas class="js-sales-chart" height="250" data-chart="<?= e(json_encode($salesChart, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)) ?>" role="img" aria-label="Daily sales total over the last seven days">
+      Sales totals over the last seven days are shown in the chart.
+    </canvas>
+  </div>
+</section>
 <div class="two-col">
   <section class="card" data-live="orders" data-live-id="admin-recent-orders">
     <h2>Recent orders</h2>

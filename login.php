@@ -18,7 +18,7 @@ include __DIR__ . '/includes/header.php';
 ?>
 <div class="auth-card">
   <h1>Welcome back</h1>
-  <p class="muted">Log in to your account.</p>
+  <p class="muted">Log in to manage orders, track deliveries, and continue shopping.</p>
   <?php if ($error): ?><div class="alert alert-error" role="alert"><?= e($error) ?></div><?php endif; ?>
   <form method="post" action="">
     <?= csrf_field() ?>

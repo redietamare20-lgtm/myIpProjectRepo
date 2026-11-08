@@ -15,7 +15,11 @@ $pageTitle  = $pageTitle ?? 'Online Bookstore';
   <title><?= e($pageTitle) ?> | Online Bookstore</title>
   <meta name="csrf-token" content="<?= e(csrf_token()) ?>">
   <meta name="base-url" content="<?= e(BASE_URL) ?>">
+  <meta name="theme-color" content="#172B24">
   <link rel="icon" type="image/svg+xml" href="<?= e(url('assets/images/logo.svg')) ?>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="<?= e(url('assets/css/style.css')) ?>">
 <?php if ($isAdmin): ?>
   <link rel="stylesheet" href="<?= e(url('assets/css/admin.css')) ?>">
@@ -23,6 +27,7 @@ $pageTitle  = $pageTitle ?? 'Online Bookstore';
   <link rel="stylesheet" href="<?= e(url('assets/css/responsive.css')) ?>">
 </head>
 <body class="<?= $isAdmin ? 'admin-body' : '' ?>" data-role="<?= e($user['role'] ?? 'guest') ?>" data-poll="4000">
+<a class="skip-link" href="<?= $isAdmin ? '#admin-main-content' : '#main-content' ?>">Skip to content</a>
 <?php if ($isAdmin): ?>
 <?php
   $script = basename($_SERVER['SCRIPT_NAME']);
@@ -32,7 +37,9 @@ $pageTitle  = $pageTitle ?? 'Online Bookstore';
     'categories.php' => ['Categories & Authors', ['categories.php']],
     'inventory.php' => ['Inventory', ['inventory.php']],
     'orders.php' => ['Orders', ['orders.php', 'order-details.php']],
+    'payments.php' => ['Payments', ['payments.php']],
     'customers.php' => ['Customers', ['customers.php']],
+    'admin-users.php' => ['Admin users', ['admin-users.php']],
     'reports.php' => ['Sales Reports', ['reports.php']],
     'notifications.php' => ['Notifications', ['notifications.php']],
     'settings.php' => ['Settings', ['settings.php']],
@@ -63,10 +70,10 @@ $pageTitle  = $pageTitle ?? 'Online Bookstore';
         <span class="topbar-user"><?= e($user['full_name'] ?? '') ?></span>
       </div>
     </header>
-    <main class="admin-content">
+    <main class="admin-content" id="admin-main-content">
       <?= flash_render() ?>
 <?php else: ?>
 <?php include __DIR__ . '/navbar.php'; ?>
-<main class="container page">
+<main class="container page" id="main-content">
   <?= flash_render() ?>
 <?php endif; ?>

@@ -128,24 +128,43 @@ function delete_cover(?string $name): void {
 }
 
 /* ---------- Books / categories / authors ---------- */
-function books_search(array $f = []): array {
-    $sql = 'SELECT b.*, a.name AS author_name, c.name AS category_name FROM books b
-            LEFT JOIN authors a ON a.id = b.author_id LEFT JOIN categories c ON c.id = b.category_id WHERE 1=1';
+function books_filter_sql(array $f): array {
+    $where = ' WHERE 1=1';
     $p = [];
     $q = clean_str($f['q'] ?? '', 100);
     if ($q !== '') {
         $like = '%' . addcslashes($q, '%_\\') . '%';
         $in = $f['search_in'] ?? 'all';
-        if ($in === 'title')       { $sql .= ' AND b.title LIKE ?'; $p[] = $like; }
-        elseif ($in === 'author')  { $sql .= ' AND a.name LIKE ?';  $p[] = $like; }
-        else                       { $sql .= ' AND (b.title LIKE ? OR a.name LIKE ?)'; $p[] = $like; $p[] = $like; }
+        if ($in === 'title')       { $where .= ' AND b.title LIKE ?'; $p[] = $like; }
+        elseif ($in === 'author')  { $where .= ' AND a.name LIKE ?';  $p[] = $like; }
+        else                       { $where .= ' AND (b.title LIKE ? OR a.name LIKE ?)'; $p[] = $like; $p[] = $like; }
     }
-    if (!empty($f['category'])) { $sql .= ' AND b.category_id = ?'; $p[] = (int)$f['category']; }
+    if (!empty($f['category'])) { $where .= ' AND b.category_id = ?'; $p[] = (int)$f['category']; }
+    foreach (['min_price' => '>=', 'max_price' => '<='] as $key => $operator) {
+        if (isset($f[$key]) && is_numeric($f[$key]) && (float)$f[$key] >= 0 && (float)$f[$key] <= 100000) {
+            $where .= ' AND b.price ' . $operator . ' ?';
+            $p[] = (float)$f[$key];
+        }
+    }
+    return [$where, $p];
+}
+function books_count(array $f = []): int {
+    [$where, $p] = books_filter_sql($f);
+    $st = getDB()->prepare('SELECT COUNT(*) FROM books b LEFT JOIN authors a ON a.id = b.author_id' . $where);
+    $st->execute($p);
+    return (int)$st->fetchColumn();
+}
+function books_search(array $f = []): array {
+    $sql = 'SELECT b.*, a.name AS author_name, c.name AS category_name FROM books b
+            LEFT JOIN authors a ON a.id = b.author_id LEFT JOIN categories c ON c.id = b.category_id';
+    [$where, $p] = books_filter_sql($f);
+    $sql .= $where;
     $sorts = ['newest' => 'b.created_at DESC, b.id DESC', 'price_asc' => 'b.price ASC, b.id ASC',
               'price_desc' => 'b.price DESC, b.id ASC', 'title' => 'b.title ASC'];
     $sql .= ' ORDER BY ' . ($sorts[$f['sort'] ?? 'newest'] ?? $sorts['newest']);
     $limit = max(1, min(200, (int)($f['limit'] ?? 100)));
-    $sql .= ' LIMIT ' . $limit;
+    $offset = max(0, (int)($f['offset'] ?? 0));
+    $sql .= ' LIMIT ' . $limit . ' OFFSET ' . $offset;
     $st = getDB()->prepare($sql);
     $st->execute($p);
     return $st->fetchAll();
@@ -407,11 +426,13 @@ function books_token(): string {
 }
 function orders_token(string $role, int $uid): string {
     if ($role === 'admin') {
-        $r = getDB()->query("SELECT COUNT(*) AS c, COALESCE(SUM(CRC32(CONCAT_WS('|', id, status))),0) AS s,
+        $r = getDB()->query("SELECT COUNT(*) AS c, COALESCE(SUM(CRC32(CONCAT_WS('|', id, status,
+                (SELECT p.status FROM payments p WHERE p.order_id = orders.id LIMIT 1)))),0) AS s,
             (SELECT COUNT(*) FROM users WHERE role='customer') AS u FROM orders")->fetch();
         return $r['c'] . '-' . $r['s'] . '-' . $r['u'];
     }
-    $st = getDB()->prepare("SELECT COUNT(*) AS c, COALESCE(SUM(CRC32(CONCAT_WS('|', id, status))),0) AS s FROM orders WHERE user_id = ?");
+    $st = getDB()->prepare("SELECT COUNT(*) AS c, COALESCE(SUM(CRC32(CONCAT_WS('|', id, status,
+        (SELECT p.status FROM payments p WHERE p.order_id = orders.id LIMIT 1)))),0) AS s FROM orders WHERE user_id = ?");
     $st->execute([$uid]);
     $r = $st->fetch();
     return $r['c'] . '-' . $r['s'];

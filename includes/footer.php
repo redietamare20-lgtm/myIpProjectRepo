@@ -10,9 +10,16 @@ $role = $user['role'] ?? 'guest';
 </main>
 <footer class="site-footer">
   <div class="container footer-wrap">
-    <div><strong>Online Bookstore</strong><p>Browse, search and order books online.</p></div>
-    <div class="footer-links"><a href="<?= e(url('books.php')) ?>">Books</a><a href="<?= e(url('about.php')) ?>">About</a><a href="<?= e(url('contact.php')) ?>">Contact</a></div>
-    <p class="copyright">&copy; <?= date('Y') ?> Online Bookstore Management System</p>
+    <div>
+      <strong>Online Bookstore</strong>
+      <p>Discover great reads, order with confidence, and track every delivery in one place.</p>
+    </div>
+    <div class="footer-links">
+      <a href="<?= e(url('books.php')) ?>">Books</a>
+      <a href="<?= e(url('about.php')) ?>">About</a>
+      <a href="<?= e(url('contact.php')) ?>">Contact</a>
+    </div>
+    <p class="copyright">&copy; <?= date('Y') ?> Online Bookstore. Built for a smooth reading and ordering experience.</p>
   </div>
 </footer>
 <?php endif; ?>

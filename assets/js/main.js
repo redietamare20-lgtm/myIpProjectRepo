@@ -64,20 +64,35 @@
       var res = await fetch(location.href, { credentials: 'same-origin', headers: { 'X-Requested-With': 'fetch' } });
       if (!res.ok) return;
       var doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+      var updated = false;
       regions.forEach(function (el) {
         var a = document.activeElement;
         if (a && el.contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return;   // don't disturb typing
         var fresh = doc.querySelector('[data-live-id="' + el.dataset.liveId + '"]');
-        if (fresh && fresh.innerHTML !== el.innerHTML) el.innerHTML = fresh.innerHTML;
+        if (fresh && fresh.innerHTML !== el.innerHTML) { el.innerHTML = fresh.innerHTML; updated = true; }
       });
+      if (updated) document.dispatchEvent(new CustomEvent('bs:content-updated'));
     } catch (e) { /* ignore - next poll will retry */ }
   };
 
   document.addEventListener('click', async function (e) {
     var t = e.target;
     // mobile menus
-    if (t.closest('.nav-toggle')) { document.querySelector('.site-header').classList.toggle('nav-open'); return; }
+    if (t.closest('.nav-toggle')) {
+      var hdr = document.querySelector('.site-header');
+      var btn = hdr && hdr.querySelector('.nav-toggle');
+      if (hdr) hdr.classList.toggle('nav-open');
+      if (btn) btn.setAttribute('aria-expanded', hdr && hdr.classList.contains('nav-open') ? 'true' : 'false');
+      return;
+    }
     if (t.closest('.sidebar-toggle')) { document.body.classList.toggle('sidebar-open'); return; }
+    // close mobile nav on backdrop tap
+    if (document.querySelector('.site-header.nav-open') && !t.closest('.main-nav') && !t.closest('.nav-toggle')) {
+      var hdr2 = document.querySelector('.site-header');
+      var btn2 = hdr2 && hdr2.querySelector('.nav-toggle');
+      if (hdr2) hdr2.classList.remove('nav-open');
+      if (btn2) btn2.setAttribute('aria-expanded', 'false');
+    }
     // notifications: mark read
     var mr = t.closest('.js-mark-read, .js-mark-all');
     if (mr) {
