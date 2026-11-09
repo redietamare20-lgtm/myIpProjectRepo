@@ -18,6 +18,7 @@ $popularStmt = $pdo->query(
 );
 $popular = $popularStmt->fetchAll();
 $pageTitle = 'Home';
+$bodyClass = 'home-page';
 include __DIR__ . '/includes/header.php';
 ?>
 <section class="hero">

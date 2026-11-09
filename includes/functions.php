@@ -77,11 +77,14 @@ function stock_badge(int $stock): string {
     if ($stock <= LOW_STOCK) return '<span class="badge badge-pending">Only ' . $stock . ' left</span>';
     return '<span class="badge badge-delivered">In stock (' . $stock . ')</span>';
 }
-function cover_img(array $b, string $class = 'book-cover'): string {
+function cover_img(array $b, string $class = 'book-cover', bool $googleLookup = false): string {
     if (!empty($b['cover_image'])) {
         return '<img class="' . e($class) . '" src="' . e(url('uploads/books/' . $b['cover_image'])) . '" alt="' . e($b['title']) . '" loading="lazy">';
     }
-    return '<div class="' . e($class) . ' cover-placeholder"><span>' . e(mb_strtoupper(mb_substr($b['title'], 0, 1))) . '</span></div>';
+    $lookupAttributes = $googleLookup
+        ? ' data-google-cover data-title="' . e($b['title']) . '" data-author="' . e($b['author_name'] ?? '') . '" data-isbn="' . e($b['isbn'] ?? '') . '"'
+        : '';
+    return '<div class="' . e($class) . ' cover-placeholder"' . $lookupAttributes . '><span>' . e(mb_strtoupper(mb_substr($b['title'], 0, 1))) . '</span></div>';
 }
 function render_book_cards(array $books): string {
     if (!$books) {
@@ -91,7 +94,7 @@ function render_book_cards(array $books): string {
     foreach ($books as $b) {
         $out = (int)$b['stock'] < 1;
         $link = e(url('book-details.php?id=' . (int)$b['id']));
-        $o .= '<article class="book-card"><a href="' . $link . '">' . cover_img($b) . '</a><div class="book-card-body">'
+        $o .= '<article class="book-card"><a href="' . $link . '">' . cover_img($b, 'book-cover', true) . '</a><div class="book-card-body">'
             . '<span class="tag">' . e($b['category_name'] ?? 'Uncategorized') . '</span>'
             . '<h3 class="book-title"><a href="' . $link . '">' . e($b['title']) . '</a></h3>'
             . '<p class="book-author">' . e($b['author_name'] ?? 'Unknown author') . '</p>'

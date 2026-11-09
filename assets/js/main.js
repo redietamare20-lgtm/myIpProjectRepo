@@ -7,6 +7,120 @@
   BS.csrf = meta('csrf-token');
   BS.url = function (p) { return BS.base + '/' + String(p).replace(/^\//, ''); };
 
+  var googleCoverQueue = [];
+  var googleCoverActive = 0;
+  var googleBooksPaused = false;
+  var googleCoverCachePrefix = 'bookstore-google-cover-v1:';
+  var googleCoverConcurrency = 3;
+  var googleBooksApiKey = meta('google-books-api-key');
+
+  function applyGoogleCover(placeholder, src) {
+    var title = placeholder.dataset.title || 'Book cover';
+    var img = document.createElement('img');
+    img.className = placeholder.classList.contains('book-cover') ? 'book-cover' : '';
+    img.alt = title;
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.src = src;
+    img.addEventListener('error', function () {
+      var initial = document.createElement('span');
+      initial.textContent = title.charAt(0).toLocaleUpperCase();
+      placeholder.classList.remove('google-cover-loaded');
+      placeholder.classList.add('cover-placeholder');
+      placeholder.replaceChildren(initial);
+    }, { once: true });
+    placeholder.classList.remove('cover-placeholder');
+    placeholder.classList.add('google-cover-loaded');
+    placeholder.replaceChildren(img);
+  }
+
+  async function lookupGoogleCover(placeholder) {
+    var title = (placeholder.dataset.title || '').trim();
+    var author = (placeholder.dataset.author || '').trim();
+    var isbn = (placeholder.dataset.isbn || '').replace(/[^0-9Xx]/g, '');
+    if (!title) return;
+
+    var cacheKey = googleCoverCachePrefix + (googleBooksApiKey ? 'keyed:' : 'anonymous:') + (isbn || (title + '|' + author).toLocaleLowerCase());
+    try {
+      var cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        cached = JSON.parse(cached);
+        if (cached.expires > Date.now()) {
+          if (cached.src) applyGoogleCover(placeholder, cached.src);
+          return;
+        }
+        localStorage.removeItem(cacheKey);
+      }
+    } catch (error) {
+      console.warn('Could not read the Google Books cover cache.', error);
+    }
+
+    var params = {
+      q: isbn ? 'isbn:' + isbn : 'intitle:' + title + (author ? ' inauthor:' + author : ''),
+      maxResults: '1',
+      fields: 'items(volumeInfo(imageLinks))'
+    };
+    if (googleBooksApiKey) params.key = googleBooksApiKey;
+    var query = new URLSearchParams(params);
+    var response = await fetch('https://www.googleapis.com/books/v1/volumes?' + query.toString(), {
+      headers: { Accept: 'application/json' },
+      credentials: 'omit'
+    });
+    if (!response.ok) {
+      var requestError = new Error('Google Books returned HTTP ' + response.status);
+      requestError.status = response.status;
+      throw requestError;
+    }
+    var data = await response.json();
+    var image = data.items && data.items[0] && data.items[0].volumeInfo && data.items[0].volumeInfo.imageLinks;
+    var src = image && (image.thumbnail || image.smallThumbnail);
+    if (src) {
+      try {
+        var imageUrl = new URL(src);
+          if (!/^https?:$/.test(imageUrl.protocol) || !/^(books\.google\.com|books\.googleusercontent\.com)$/.test(imageUrl.hostname)) src = '';
+          else {
+            imageUrl.protocol = 'https:';
+            src = imageUrl.href;
+          }
+      } catch (error) {
+        src = '';
+      }
+    }
+
+    try {
+      localStorage.setItem(cacheKey, JSON.stringify({
+        src: src || '',
+        expires: Date.now() + (src ? 30 : 7) * 24 * 60 * 60 * 1000
+      }));
+    } catch (error) {
+      console.warn('Could not save the Google Books cover cache.', error);
+    }
+    if (src) applyGoogleCover(placeholder, src);
+  }
+
+  function processGoogleCoverQueue() {
+    while (!googleBooksPaused && googleCoverActive < googleCoverConcurrency && googleCoverQueue.length) {
+      var placeholder = googleCoverQueue.shift();
+      googleCoverActive++;
+      lookupGoogleCover(placeholder).catch(function (error) {
+        console.warn('Google Books cover lookup failed; keeping the local placeholder.', error);
+        if (error.status === 403 || error.status === 429) googleBooksPaused = true;
+      }).then(function () {
+        googleCoverActive--;
+        processGoogleCoverQueue();
+      });
+    }
+  }
+
+  function loadGoogleBookCovers() {
+    if (googleBooksPaused) return;
+    document.querySelectorAll('[data-google-cover]:not([data-google-cover-queued])').forEach(function (placeholder) {
+      placeholder.dataset.googleCoverQueued = 'true';
+      googleCoverQueue.push(placeholder);
+    });
+    processGoogleCoverQueue();
+  }
+
   /** fetch() wrapper: JSON in/out, CSRF header, readable errors. */
   BS.api = async function (path, opts) {
     opts = opts || {};
@@ -105,6 +219,9 @@
       BS.busy(mr, false);
     }
   });
+
+  loadGoogleBookCovers();
+  document.addEventListener('bs:content-updated', loadGoogleBookCovers);
 
   // <form data-confirm="..."> asks before submitting
   document.addEventListener('submit', function (e) {

@@ -24,7 +24,7 @@ $role = $user['role'] ?? 'guest';
 </footer>
 <?php endif; ?>
 <div id="toasts" class="toasts" aria-live="polite"></div>
-<script src="<?= e(url('assets/js/main.js')) ?>"></script>
+<script src="<?= e(url('assets/js/main.js?v=' . filemtime(__DIR__ . '/../assets/js/main.js'))) ?>"></script>
 <?php if ($role !== 'admin'): ?><script src="<?= e(url('assets/js/cart.js')) ?>"></script><?php endif; ?>
 <?php if ($role === 'admin'): ?><script src="<?= e(url('assets/js/admin.js')) ?>"></script><?php endif; ?>
 <script src="<?= e(url('assets/js/realtime.js')) ?>"></script>

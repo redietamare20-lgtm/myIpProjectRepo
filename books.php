@@ -83,10 +83,32 @@ include __DIR__ . '/includes/header.php';
     <button class="btn btn-primary" type="submit">Apply filters <span aria-hidden="true">&rarr;</span></button>
     <a class="catalog-reset" href="<?= e(url('books.php')) ?>">Clear</a>
   </form>
+  <?php if ($cats): ?>
+    <div class="catalog-category-browse">
+      <span class="catalog-category-label">Browse by category</span>
+      <div class="catalog-chip-row" aria-label="Book categories">
+      <?php foreach ($cats as $category): ?>
+        <?php $isActive = (int)$filters['category'] === (int)$category['id']; ?>
+        <?php $chipFilters = $filters; unset($chipFilters['category'], $chipFilters['page']); ?>
+        <?php if (!$isActive) $chipFilters['category'] = (int)$category['id']; ?>
+        <a class="catalog-chip<?= $isActive ? ' catalog-chip-active' : '' ?>" href="<?= e(url('books.php?' . http_build_query($chipFilters))) ?>"<?= $isActive ? ' aria-current="true"' : '' ?>>
+          <?= e($category['name']) ?>
+        </a>
+      <?php endforeach; ?>
+        <?php if ((int)$filters['category'] !== 0): ?>
+          <?php $allBooksFilters = $filters; unset($allBooksFilters['category'], $allBooksFilters['page']); ?>
+          <a class="catalog-chip catalog-chip-muted" href="<?= e(url('books.php?' . http_build_query($allBooksFilters))) ?>">All categories</a>
+        <?php endif; ?>
+      </div>
+    </div>
+  <?php endif; ?>
 </section>
 <div data-live="books" data-live-id="books-list">
   <?php if ($priceError): ?><div class="alert alert-warning" role="status"><?= e($priceError) ?></div><?php endif; ?>
-  <div class="catalog-results-heading"><p class="muted">Showing <strong><?= $firstBook ?>–<?= $lastBook ?></strong> of <strong><?= $totalBooks ?></strong> book<?= $totalBooks === 1 ? '' : 's' ?></p><span>CURATED FOR YOUR NEXT CHAPTER</span></div>
+  <div class="catalog-results-heading">
+    <div><span class="page-kicker">The bookshelf</span><p class="muted">Showing <strong><?= $firstBook ?>–<?= $lastBook ?></strong> of <strong><?= $totalBooks ?></strong> book<?= $totalBooks === 1 ? '' : 's' ?></p></div>
+    <span>CURATED FOR YOUR NEXT CHAPTER</span>
+  </div>
   <?= render_book_cards($books) ?>
   <?php if ($totalPages > 1): ?>
     <nav class="pagination" aria-label="Book pages">

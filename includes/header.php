@@ -6,6 +6,7 @@ $isCustomer = $user && $user['role'] === 'customer';
 $cartCount  = $isCustomer ? cart_count((int)$user['id']) : 0;
 $notifCount = $user ? notifications_unread($user['role'], (int)$user['id']) : 0;
 $pageTitle  = $pageTitle ?? 'Online Bookstore';
+$bodyClasses = array_filter([$isAdmin ? 'admin-body' : '', $bodyClass ?? '']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,7 +16,8 @@ $pageTitle  = $pageTitle ?? 'Online Bookstore';
   <title><?= e($pageTitle) ?> | Online Bookstore</title>
   <meta name="csrf-token" content="<?= e(csrf_token()) ?>">
   <meta name="base-url" content="<?= e(BASE_URL) ?>">
-  <meta name="theme-color" content="#172B24">
+  <meta name="google-books-api-key" content="<?= e(getenv('GOOGLE_BOOKS_API_KEY') ?: '') ?>">
+  <meta name="theme-color" content="<?= ($bodyClass ?? '') === 'home-page' ? '#32213D' : '#172B24' ?>">
   <link rel="icon" type="image/svg+xml" href="<?= e(url('assets/images/logo.svg')) ?>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,7 +28,7 @@ $pageTitle  = $pageTitle ?? 'Online Bookstore';
 <?php endif; ?>
   <link rel="stylesheet" href="<?= e(url('assets/css/responsive.css')) ?>">
 </head>
-<body class="<?= $isAdmin ? 'admin-body' : '' ?>" data-role="<?= e($user['role'] ?? 'guest') ?>" data-poll="4000">
+<body class="<?= e(implode(' ', $bodyClasses)) ?>" data-role="<?= e($user['role'] ?? 'guest') ?>" data-poll="4000">
 <a class="skip-link" href="<?= $isAdmin ? '#admin-main-content' : '#main-content' ?>">Skip to content</a>
 <?php if ($isAdmin): ?>
 <?php

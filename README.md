@@ -71,6 +71,11 @@ Online payment gateways are intentionally NOT implemented.
 The book catalogue is paginated (12 books per page) and keeps search, category, and sort filters when changing pages.
 The home page highlights the newest books and ranks bestsellers from completed order data. The admin dashboard
 draws its seven-day sales overview with the native Canvas API; it refreshes with the existing order polling.
+Storefront book cards prefer uploaded covers and look up missing covers through the Google Books API. Successful
+lookups are cached in the visitor's browser; when Google Books or the internet is unavailable, the title initial
+placeholder remains visible. If the Google Books API's shared quota is exhausted, create an API key in Google
+Cloud, enable the Books API, restrict the key to the Books API and your site referrers, then set the
+`GOOGLE_BOOKS_API_KEY` environment variable before restarting Apache.
 Administrators can also create or block additional admin accounts and review order payments in the admin sidebar.
 Admin accounts use the existing `users` table with the `admin` role; the project does not maintain a separate
 `admins` table. Cash-on-delivery payment status follows order progress and can be reconciled in Admin -> Payments.
